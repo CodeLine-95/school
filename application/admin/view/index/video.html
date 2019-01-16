@@ -1,0 +1,73 @@
+{include file="public:title"/}
+<script type="text/javascript" src="__PUBLIC__/home/js/cropper.min.js"></script>
+<link href="__PUBLIC__/home/css/cropper.min.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/home/css/ImgCropping.css" rel="stylesheet" type="text/css">
+<body>
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header">视频列表</div>
+          <div class="layui-card-body" pad15>
+              <button class="layui-btn layui-btn-sm" onclick="crm_admin_show('添加视频','{:url('index/addvideo')}')"><i class="layui-icon">&#xe608;</i>添加视频</button>
+            <table class="layui-table">
+                <thead>
+                  <tr>
+                    <th width="25" align="center">
+                      <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div>
+                    </th>
+                    <th>视频名称</th>
+                    <th>视频缩略图</th>
+                    <th>视频大小</th>
+                    <th>创建时间</th>
+                    <th>操作</th>
+                </thead>
+                <tbody>
+                  {empty name='list'}
+                   <tr align="center" style="height:500px;"><td colspan="6">暂无视频</td></tr>
+                  {else}
+                  {volist name="list" id="vv"}
+                    <tr>
+                      <td>
+                        <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id='{$vv.id}'><i class="layui-icon">&#xe605;</i></div>
+                     </td>
+                     <td>{$vv['name']}</td>
+                     <td> <div style="width:80px;height:50px;"><img src="{$vv['path']}" alt="" style="width:100%;"></div></td>
+                     <td>{$vv['look']}</td>
+                     <td>{:date('Y年m月d日 h:i:s',$vv['createtime'])}</td>
+                     <td>
+                        <button class="layui-btn layui-btn-sm" onclick="crm_admin_show('修改视频信息','{:url('index/updatevideo',['id'=>$vv['id']])}')">
+                          <i class="layui-icon">&#xe642;</i>
+                        </button>
+                        <button class="layui-btn layui-btn-sm" onclick="del('{$vv['id']}')"><i class="layui-icon">&#xe640;</i></button>
+                     </td>
+                    </tr>
+                  {/volist}
+                  {/empty}
+                </tbody>
+            </table>
+            <div class="page">
+             {$list->render()}
+            </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function del(id)
+    {
+      layer.confirm("您确定删除此视频吗",function(){
+          $.ajax({
+            url:"{:url('index/delvideo')}",
+            data:{id:id},
+            type:"post",
+            success:function(data)
+            {
+              var status = JSON.parse(data);
+              layer.msg(status.msg,{icon: status.icon,time:1000},function () {window.location.reload();});
+            }
+          });
+      });
+    }
+  </script>
+</body>
+</html>

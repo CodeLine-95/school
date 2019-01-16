@@ -1,0 +1,99 @@
+{include file="public:title"/}
+<script type="text/javascript" src="__PUBLIC__/home/js/cropper.min.js"></script>
+<link href="__PUBLIC__/home/css/cropper.min.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/home/css/ImgCropping.css" rel="stylesheet" type="text/css">
+<body>
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header">文章列表</div>
+          <div class="layui-card-body" pad15>
+           
+            <button class="layui-btn layui-btn-sm" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
+            <button class="layui-btn layui-btn-sm" onclick="crm_admin_show('文章分类','{:url('art/type')}')"><i class="layui-icon">&#xe64f;</i>文章分类管理</button>
+            <button class="layui-btn layui-btn-sm" onclick="crm_admin_show('添加文章','{:url('art/add')}')"><i class="layui-icon">&#xe608;</i>添加文章</button>
+            <button class="layui-btn layui-btn-sm"><i class="layui-icon">&#xe62c;</i>文章点击量</button>
+            <button class="layui-btn layui-btn-sm"><i class="layui-icon">&#xe64c;</i>文章收录状态</button>
+            <button class="layui-btn layui-btn-sm"><i class="layui-icon">&#xe664;</i>异常状态文章</button>
+            <button class="layui-btn layui-btn-sm"><i class="layui-icon">&#xe674;</i>文章发布频率</button>
+             <crmblok>
+          </crmblok>
+            <table class="layui-table" style="margin-top:10px;">
+                <thead>
+                  <tr>
+                    <th width="25" align="center">
+                      <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div>
+                    </th>
+                    <th>文章标题</th>
+                    <th>文章作者</th>
+                    <th>文章阅读量</th>
+                    <th>文章分类</th>
+                    <th>创建时间</th>
+                    <th>更改时间</th>
+                    <th>是否收录</th>
+                    <th>操作</th>
+                </thead>
+                <tbody>
+                  {empty name="list"}
+                    <tr align="center" style="height:500px;"><td colspan="9">暂无文章</td></tr>
+                  {else}
+                  {volist name="list" id="vv"}
+                  <tr>
+                    <td>
+                      <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id='{$vv.id}'><i class="layui-icon">&#xe605;</i></div>
+                  </td>
+                    <td>{$vv['title']}</td>
+                    <td>{$vv['author']}</td>
+                    <td>{$vv['lookcount']}</td>
+                    <td>{$vv['typename']}</td>
+                    <td><?php echo(date('Y-m-d h:i:s',$vv['createtime']));?></td>
+                    <td>{if condition="empty($vv['updatetime']) eq false"}
+                        <?php echo(date('Y-m-d h:i:s',$vv['updatetime']));?>
+                        {else}
+                         暂未更改，优秀
+                        {/if}</td>
+                    <td>{if condition="$vv['include'] eq 0"}暂未收录{else}已收录{/if}</td>
+                    <td>
+                      <button class="layui-btn layui-btn-sm"><i class="layui-icon">&#xe705;</i></button>
+                      <button class="layui-btn layui-btn-sm"><i class="layui-icon">&#xe602;</i></button>
+                      <button class="layui-btn layui-btn-sm" onclick="crm_admin_show('编辑文章','{:url('art/update',['id'=>$vv['id']])}')">
+                        <i class="layui-icon">&#xe642;</i>
+                      </button>
+                      <button class="layui-btn layui-btn-sm" onclick="del('{$vv['id']}','{$vv['include']}')"><i class="layui-icon">&#xe640;</i></button>
+                    </td>     
+                  </tr>
+                  {/volist}
+                  {/empty}
+                </tbody>
+            </table>
+            <div class="page">
+             {$list->render()}
+            </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function del(id,include)
+    {
+      if(include==1){
+        layer.msg("严禁您删除已收录文章,您可以修改文章的内容",{icon:6,time:3000});
+      }else{
+          layer.confirm("亲,您确定删除当前文章吗？",function(){
+            $.ajax({
+              url:"{:url('art/del')}",
+              data:{id:id},
+              type:'post',
+              success:function(data){
+                var status = JSON.parse(data);
+                layer.msg(status.msg,{icon:status.icon,time:1000},function(){
+                  window.location.reload();
+                });
+              }
+            });
+         });
+      }
+    }
+  </script>
+</body>
+</html>

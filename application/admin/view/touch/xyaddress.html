@@ -1,0 +1,95 @@
+{include file="public:title"/}
+<script type="text/javascript" src="__PUBLIC__/home/js/cropper.min.js"></script>
+<link href="__PUBLIC__/home/css/cropper.min.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/home/css/ImgCropping.css" rel="stylesheet" type="text/css">
+<body>
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header">智能检索经纬度</div>
+          <div class="layui-card-body" pad15>
+          	<div class="layui-form" lay-filter="">
+              <div class="layui-form-item">
+
+                <label class="layui-form-label">定位位置</label>
+                <div class="layui-input-block">
+                  <input type="text" name="naddress" value=""  readonly lay-verify="required|naddress" id="naddress" autocomplete="off" placeholder="此处显示真实的地图定位" class="layui-input">
+                </div>
+            </div>
+				<div class="layui-form-item">
+				<label class="layui-form-label">X</label>
+                <div class="layui-input-inline">
+                  <input type="text" name="xaddress" value="" readonly lay-verify="required|xaddress" id="xaddress" autocomplete="off" placeholder="此处显示地图定位的X值" class="layui-input">
+                </div>
+
+                <label class="layui-form-label">Y</label>
+                <div class="layui-input-inline">
+                  <input type="text" name="yaddress" value="" readonly lay-verify="required|yaddress" id="yaddress" autocomplete="off" placeholder="此处显示地图定位的Y值" class="layui-input">
+                </div>
+
+                <div class="layui-input-inline">
+                  <button class="layui-btn" lay-submit lay-filter="setmyinfo">点击提交</button>
+                </div>
+              </div>
+            </div>
+			<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=a73GvnaKjO14fRT5NOUmCzry3XafcFcd"></script>
+            <div id="allmap" style="height:800px;width:100%;"></div>
+			<script type="text/javascript">
+			    // 百度地图API功能
+			    var map = new BMap.Map("allmap");
+			    var point = new BMap.Point(116.415994,39.907966);
+			    map.centerAndZoom(point,12);
+			    map.enableScrollWheelZoom(true);
+			    var geoc = new BMap.Geocoder();    
+
+			    map.addEventListener("click", function(e){   
+			        //通过点击百度地图，可以获取到对应的point, 由point的lng、lat属性就可以获取对应的经度纬度     
+			        var pt = e.point;
+			        geoc.getLocation(pt, function(rs){
+			            //addressComponents对象可以获取到详细的地址信息
+			            var addComp = rs.addressComponents;
+			            var site = addComp.province + ", " + addComp.city + ", " + addComp.district + ", " + addComp.street + ", " + addComp.streetNumber;
+			            //将对应的HTML元素设置值
+			            $("#naddress").val(site);
+			            $("#xaddress").val(pt.lng);
+			            $("#yaddress").val(pt.lat);
+			        });        
+			    });
+			    layui.use(['form','layer','upload'], function(){
+		          $ = layui.jquery;
+		          var form = layui.form,layer = layui.layer;
+		          var upload = layui.upload;
+		              //监听提交
+		              form.on('submit(setmyinfo)', function(data){
+		                //发异步，把数据提交给php
+		                $.ajax({
+		                    url:"{:url('touch/xyaddress')}",
+		                    type:"POST",
+		                    data: {
+		                        data:JSON.stringify(data.field)
+		                    },
+		                    success:function (data) {
+		                        var status = JSON.parse(data);
+		                        if (status.icon == 6){
+		                            layer.msg(status.msg,{icon: status.icon,time:1000},function () {
+		                                var index = parent.layer.getFrameIndex(window.name);
+										parent.layer.close(index);//关闭当前页
+		                           });
+		                        } else {
+		                            layer.msg(status.msg,{icon: status.icon,time:1000});
+		                        }
+		                    }
+		                });
+		            return false;
+		            });
+
+		    });
+			</script>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

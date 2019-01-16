@@ -1,0 +1,65 @@
+{include file="public:title"/}
+<script type="text/javascript" src="__PUBLIC__/home/js/cropper.min.js"></script>
+<link href="__PUBLIC__/home/css/cropper.min.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/home/css/ImgCropping.css" rel="stylesheet" type="text/css">
+<body>
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header">大事件列表</div>
+          <div class="layui-card-body" pad15>
+              <button class="layui-btn layui-btn-sm" onclick="crm_admin_show('添加大事件','{:url('index/addcourse')}')"><i class="layui-icon">&#xe608;</i>添加大事件</button>
+            <div class="layui-card">
+          <div class="layui-card-body">
+
+            <ul class="layui-timeline">
+              {volist name="list" id="vv"}
+              <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                  <h3 class="layui-timeline-title">{:date('Y年m月d日',$vv['time'])}</h3>
+                  <blockquote class="layui-elem-quote">{$vv['name']}
+                    <span style="margin-left:20%;">
+                        <button class="layui-btn layui-btn-sm" onclick="crm_admin_show('修改公司大事件信息','{:url('index/updatecourse',['id'=>$vv['id']])}')">
+                          <i class="layui-icon">&#xe642;</i>
+                        </button>
+                        <button class="layui-btn layui-btn-sm" onclick="del('{$vv['id']}')"><i class="layui-icon">&#xe640;</i>
+                        </button>
+                    </span></blockquote>
+                  <p>发表时间:{:date('Y年m月d日',$vv['createtime'])}</p>
+                </div>
+              </li>
+              {/volist}
+              <li class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis"></i>
+                <div class="layui-timeline-content layui-text">
+                  <div class="layui-timeline-title">过去</div>
+                </div>
+              </li>
+            </ul> 
+          
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function del(id)
+    {
+      layer.confirm("您确定删除此大事件吗",function(){
+          $.ajax({
+            url:"{:url('index/delcourse')}",
+            data:{id:id},
+            type:"post",
+            success:function(data)
+            {
+              var status = JSON.parse(data);
+              layer.msg(status.msg,{icon: status.icon,time:1000},function () {window.location.reload();});
+            }
+          });
+      });
+    }
+  </script>
+</body>
+</html>

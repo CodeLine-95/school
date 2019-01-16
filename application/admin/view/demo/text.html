@@ -1,0 +1,33 @@
+{include file="public:title"/}
+<body>
+<div class="layui-container">
+        <div class="layui-row layui-col-space15 margin15">
+            <section class="layui-card">
+                <div class="layui-card-body" style="width:500px;height:300px;">
+                    <div class="video" id="video" data-url="https://school.wxn.fun/video/20190116/7284f971-6794-44b5-95b6-49c102d75f1b.mp4" style="width: 100%;"></div>
+                </div>
+            </section>
+        </div>
+    </div>
+    <script type="text/javascript">
+    layui.config({
+        base: '/static/layuiadmin/layui_exts/'
+    }).extend({
+        ckplayer: 'ckplayer'
+    }).use(['jquery', 'ckplayer'], function() {
+        var $ = layui.$,
+            ckplayer = layui.ckplayer;
+        var vUrl = $('#video').data('url'),
+            videoObject = {
+            container: '#video',
+            loop: true,
+            autoplay: false,
+            video: [
+                [vUrl, 'video/mp4']
+            ]
+        };
+        var player = new ckplayer(videoObject);
+    });
+    </script>
+</body>
+</html>

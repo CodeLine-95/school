@@ -1,0 +1,58 @@
+{include file="public:title"/}
+<script type="text/javascript" src="__PUBLIC__/home/js/cropper.min.js"></script>
+<link href="__PUBLIC__/home/css/cropper.min.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/home/css/ImgCropping.css" rel="stylesheet" type="text/css">
+<body>
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header">文章分类管理</div>
+          <div class="layui-card-body" pad15>
+              <button class="layui-btn layui-btn-sm" onclick="crm_admin_show('添加文章分类','{:url('art/addtype')}')"><i class="layui-icon">&#xe608;</i>添加文章分类</button>
+            <table class="layui-table">
+                <thead>
+                  <tr>
+                    <th>分类名称</th>
+                    <th>分类图片</th>
+                    <th>创建时间</th>
+                    <th>操作</th>
+                </thead>
+                <tbody>
+                  {volist name="list" id="vv"}
+                  <tr>
+                    <td>{$vv['typename']}</td>
+                    <td> <div style="width:120px;height:100px;"><img src="{$vv['img']}" alt="" style="width:100%;"></div></td>
+                    <td><?php echo(date('Y年m月d日 h:i:s',$vv['createtime']));?></td>
+                    <td>
+                       <button class="layui-btn layui-btn-sm" onclick="crm_admin_show('编辑文章分类','{:url('art/updatetype',['id'=>$vv['id']])}')">
+                        <i class="layui-icon">&#xe642;</i>
+                      </button>
+                       <button class="layui-btn layui-btn-sm" onclick="del('{$vv['id']}')"><i class="layui-icon">&#xe640;</i></button>
+                    </td>     
+                  </tr>
+                  {/volist}
+                </tbody>
+            </table>
+      </div>
+    </div>
+  </div>
+  <script>
+    function del(id)
+    {
+      layer.confirm("您确定删除吗？可能会影响到已上线文章",function(){
+          $.ajax({
+            url:"{:url('art/type')}",
+            data:{id:id},
+            type:"post",
+            success:function(data)
+            {
+              var status = JSON.parse(data);
+              layer.msg(status.msg,{icon: status.icon,time:1000},function () {window.location.reload();});
+            }
+          });
+      });
+    }
+  </script>
+</body>
+</html>
