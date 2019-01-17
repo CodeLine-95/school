@@ -8,6 +8,7 @@ use app\admin\model\Seoxiong;
 use app\admin\model\School as Schools;
 use app\admin\model\Hands as Hand;
 use app\admin\model\Course as Courser;
+use app\admin\model\Music as Musics;
 use think\Cache;
 class Index extends Base
 {
@@ -416,17 +417,38 @@ class Index extends Base
     public function addvideo()
     {
         if(request()->isPost()){
-
+            $data = json_decode(input('post.data'),true);
+            unset($data['file']);
+            $data['createtime']=time();
+            $data['type']=2;
+            $re = (new Path)->insert($data);
+            if($re){
+                $return=array("msg"=>"上传视频成功","icon"=>6);
+            }else{
+                $return=array("msg"=>"上传视频失败","icon"=>5);
+            }
+            return json_encode($return);
         }else{
             return $this->fetch();
         }
     }
     // 编辑宣传片
-    public function updatevideo()
+    public function updatevideo($id=0)
     {
         if(request()->isPost()){
-
+            $data = json_decode(input('post.data'),true);
+            unset($data['file']);
+            $data['type']=2;
+            $re = (new Path)->update($data);
+            if($re){
+                $return=array("msg"=>"编辑视频成功","icon"=>6);
+            }else{
+                $return=array("msg"=>"编辑视频失败","icon"=>5);
+            }
+            return json_encode($return);
         }else{
+            $video = (new Path)->where('id',$id)->find();
+            $this->assign('video',$video);
             return $this->fetch();
         }
     }
@@ -435,9 +457,9 @@ class Index extends Base
     {
         $id = input('post.id');
         if(Path::destroy($id)){
-        $return = array("msg"=>"删除宣传片成功","icon"=>6);
+        $return = array("msg"=>"删除视频成功","icon"=>6);
         }else{
-            $return = array("msg"=>"删除宣传片失败","icon"=>5);
+            $return = array("msg"=>"删除视频失败","icon"=>5);
         }
         return json_encode($return);
     }
@@ -534,4 +556,51 @@ class Index extends Base
 		}
         return $html;
 	}
+    // 查看视频
+    public function lookvideo($id)
+    {
+        $path = (new Path)->where('id',$id)->find();
+        $this->assign('path',$path);
+        return $this->fetch();
+    }
+    // 音频列表
+    public function music()
+    {
+        if(request()->isPost()){
+
+        }else{
+            $list = (new Musics)->paginate(10);
+            $this->assign('list',$list);
+            return $this->fetch();
+        }
+    }
+    // 添加音频
+    public function addmusic()
+    {
+       if(request()->isPost()){
+
+        }else{
+            return $this->fetch();
+        } 
+    }
+    // 编辑音频
+    public function updatemusic()
+    {
+       if(request()->isPost()){
+
+        }else{
+            return $this->fetch();
+        } 
+    }
+    // 删除音频
+    public function delmusic()
+    {
+        $id = input('post.id');
+        if(Musics::destroy($id)){
+        $return = array("msg"=>"删除音乐成功","icon"=>6);
+        }else{
+            $return = array("msg"=>"删除音乐失败","icon"=>5);
+        }
+        return json_encode($return);
+    }
 }

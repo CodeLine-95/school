@@ -1,9 +1,10 @@
+
 {include file="public:title"/}
 <script type="text/javascript" src="__PUBLIC__/home/js/cropper.min.js"></script>
 <link href="__PUBLIC__/home/css/cropper.min.css" rel="stylesheet" type="text/css">
 <link href="__PUBLIC__/home/css/ImgCropping.css" rel="stylesheet" type="text/css">
 <style>
-    #progress{
+ #progress{
 	    display: block;
 
 		width: 180px;
@@ -20,7 +21,7 @@
 		
 		float: left;
 		
-		
+		margin-left: 10px;
     }
 
     #finish{
@@ -73,44 +74,36 @@
 	    color: #fff;
 	    text-decoration: none;
 	}
+
 </style>
 <body>
   <div class="layui-fluid">
     <div class="layui-row layui-col-space15">
       <div class="layui-col-md12">
         <div class="layui-card">
-          <div class="layui-card-header">添加视频</div>
+          <div class="layui-card-header">添加音乐</div>
           <div class="layui-card-body" pad15>
             
             <div class="layui-form" lay-filter="">
               <div class="layui-form-item">
-                <label class="layui-form-label">视频标题</label>
+                <label class="layui-form-label">音乐标题</label>
                 <div class="layui-input-block">
-                  <input type="text" name="name" value="" autocomplete="off" placeholder="请输入视频标题" class="layui-input">
+                  <input type="text" name="name" value="" autocomplete="off" placeholder="请输入音乐标题" class="layui-input">
                 </div>
               </div>
               <div class="layui-form-item">
-                  <label for="ser_pic" class="layui-form-label">上传视频</label>
+                  <label for="ser_pic" class="layui-form-label">上传音乐</label>
                   <div class="layui-input-block">
                       <div style="float: left;margin-right: 10px;">
                           <input type="text" name="path" id="ser_pic2" value="" style="float: left;width: 800px;" required="" autocomplete="off" class="layui-input" readonly>
                       </div>
-                      <a href="javascript:;" class="file"><i class="layui-icon">&#xe67c;</i>上传视频
+                      <a href="javascript:;" class="file"><i class="layui-icon">&#xe67c;</i>上传音乐
 					    <input type="file" name="file" id="file">
 					  </a>
-<!--                       <button type="button" id="ser_pic" class="layui-btn"><i class="layui-icon">&#xe67c;</i>上传视频</button> -->
                       <div id="progress">
-					     <div id="finish" style="width: 0%;text-align: right;line-height: 40px;font-size:14px;color:#C0FF3E;border-radius: 5px;padding-right: 5px;" progress="0"></div>
+					     <div id="finish" style="width: 0%;text-align: right;line-height: 40px;font-size:14px;color:#C0FF3E;border-radius: 5px;" progress="0"></div>
 					  </div>
-                      <div class="layui-container" style="width: 1120px;">
-                        <div class="layui-row layui-col-space15 margin15">
-                            <section class="layui-card" style="margin-left: -7px;">
-                                <div class="layui-card-body" style="width:500px;height:300px;margin-left:-31px">
-                                    <div class="video" id="video" data-url="" style="width: 100%;"></div>
-                                </div>
-                            </section>
-                        </div>
-                    </div>
+                    
                   </div>
                 </div>
               <div class="layui-form-item">
@@ -127,7 +120,6 @@
   </div>
   <script type="text/javascript">
         
-
 	    var fileForm = document.getElementById("file");
 	    var xhr = new XMLHttpRequest();
         var form_data = new FormData();
@@ -137,7 +129,7 @@
         var blob;
         var blob_num = 1;
         var is_stop = 0
-        var arr = ["video/mp4"];
+        var arr = ["audio/mp3",'audio/mpeg'];
 	    var upload = new upload();
 	    fileForm.onchange = function(){
 	        upload.addFileAndSend(this);
@@ -146,6 +138,7 @@
 	    function upload(){
 	         //对外方法，传入文件对象
 	        this.addFileAndSend = function(that){
+		        console.log(that.files[0].type)
 	            if(contains(arr,that.files[0].type)){
 	                var file = that.files[0];
 	                blob = cutFile(file);
@@ -182,7 +175,7 @@
             form_data.append('blob_num',blob_num);
             form_data.append('total_blob_num',total_blob_num);
             form_data.append('file_name',file.name);
-            xhr.open('POST',"{:url('index/videoAction')}",false);
+            xhr.open('POST',"{:url('index/musicAction')}",false);
             xhr.onreadystatechange = function () {
                 var progress;
                 var progressObj = document.getElementById('finish');
@@ -206,28 +199,7 @@
             xhr.send(form_data);
             var data = JSON.parse(xhr.responseText);
             $('input[name=path]').val(data.file_path);
-            $("#video").attr('data-url',data.file_path);
-            var dataurl = $("#video").attr('data-url');
-            if(dataurl!=false){
-                layui.config({
-                base: '/static/layuiadmin/layui_exts/'
-                }).extend({
-                    ckplayer: 'ckplayer'
-                }).use(['jquery', 'ckplayer'], function() {
-                    var $ = layui.$,
-                        ckplayer = layui.ckplayer;
-                    var vUrl = $('#video').data('url');
-                    videoObject = {
-                    container: '#video',
-                    loop: true,
-                    autoplay: false,
-                    video: [
-                        [vUrl, 'video/mp4']
-                    ]
-                    };
-                    var player = new ckplayer(videoObject);
-                });
-            }
+            
         }
 
 
@@ -238,7 +210,7 @@
           form.on('submit(setmyinfo)', function(data){
             //发异步，把数据提交给php
             $.ajax({
-                url:"{:url('index/addvideo')}",
+                url:"{:url('index/addmusic')}",
                 type:"POST",
                 data: {
                     data:JSON.stringify(data.field)

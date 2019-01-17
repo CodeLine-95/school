@@ -4,23 +4,13 @@
 <link href="__PUBLIC__/home/css/ImgCropping.css" rel="stylesheet" type="text/css">
 <style>
     #progress{
-	    display: block;
-
-		width: 180px;
-		
-		height: 38px;
-		
-		background-color: #f7f7f7;
-		
-		box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
-		
-		border-radius: 10px;
-		
-		background-image: linear-gradient(to bottom,#f5f5f5,#f9f9f9);
-		
-		float: left;
-		
-		
+	    display: inline-block;
+        width: 200px;
+        height: 40px;
+        background-color:#f7f7f7;
+        box-shadow:inset 0 1px 2px rgba(0,0,0,0.1);
+        border-radius:4px;
+        background-image:linear-gradient(to bottom,#f5f5f5,#f9f9f9);
     }
 
     #finish{
@@ -33,46 +23,32 @@
         margin-top: 50px;
     }
     .file {
-	    position: relative;
-	
-		display: block;
-		
-		background: #00EE76;
-		
-		border: 1px solid #00EE76;
-		
-		border-radius: 4px;
-		
-		padding: 0px 12px;
-		
-		overflow: hidden;
-		
-		color: #fff;
-		
-		text-decoration: none;
-		
-		text-indent: 0;
-		
-		line-height: 35px;
-		
-		width: 75px;
-		
-		float: left;
-	}
-	.file input {
-	    position: absolute;
-	    display: inline-block;
-	    font-size: 100px;
-	    right: 0;
-	    top: 0;
-	    opacity: 0;
-	}
-	.file:hover {
-	    background: #00EE76;
-	    border-color: #00EE76;
-	    color: #fff;
-	    text-decoration: none;
-	}
+    position: relative;
+    display: inline-block;
+    background: #00EE76;
+    border: 1px solid #00EE76;
+    border-radius: 4px;
+    padding: 0px 12px;
+    overflow: hidden;
+    color: #fff;
+    text-decoration: none;
+    text-indent: 0;
+    line-height: 38px;
+}
+.file input {
+    position: absolute;
+    display: inline-block;
+    font-size: 100px;
+    right: 0;
+    top: 0;
+    opacity: 0;
+}
+.file:hover {
+    background: #00EE76;
+    border-color: #00EE76;
+    color: #fff;
+    text-decoration: none;
+}
 </style>
 <body>
   <div class="layui-fluid">
@@ -86,21 +62,22 @@
               <div class="layui-form-item">
                 <label class="layui-form-label">视频标题</label>
                 <div class="layui-input-block">
-                  <input type="text" name="name" value="" autocomplete="off" placeholder="请输入视频标题" class="layui-input">
+                    <input type="hidden" name="id" value="{$video['id']}">
+                  <input type="text" name="name" value="{$video['name']}" autocomplete="off" placeholder="请输入视频标题" class="layui-input">
                 </div>
               </div>
               <div class="layui-form-item">
                   <label for="ser_pic" class="layui-form-label">上传视频</label>
                   <div class="layui-input-block">
                       <div style="float: left;margin-right: 10px;">
-                          <input type="text" name="path" id="ser_pic2" value="" style="float: left;width: 800px;" required="" autocomplete="off" class="layui-input" readonly>
+                          <input type="text" name="path" id="ser_pic2" value="{$video['path']}" style="float: left;width: 800px;" required="" autocomplete="off" class="layui-input" readonly>
                       </div>
                       <a href="javascript:;" class="file"><i class="layui-icon">&#xe67c;</i>上传视频
 					    <input type="file" name="file" id="file">
 					  </a>
 <!--                       <button type="button" id="ser_pic" class="layui-btn"><i class="layui-icon">&#xe67c;</i>上传视频</button> -->
-                      <div id="progress">
-					     <div id="finish" style="width: 0%;text-align: right;line-height: 40px;font-size:14px;color:#C0FF3E;border-radius: 5px;padding-right: 5px;" progress="0"></div>
+                      <div id="progress" style="clear: both;">
+					     <div id="finish" style="width: 0%;text-align: right;line-height: 75px;font-size:20px;color:#C0FF3E;" progress="0"></div>
 					  </div>
                       <div class="layui-container" style="width: 1120px;">
                         <div class="layui-row layui-col-space15 margin15">
@@ -238,7 +215,7 @@
           form.on('submit(setmyinfo)', function(data){
             //发异步，把数据提交给php
             $.ajax({
-                url:"{:url('index/addvideo')}",
+                url:"{:url('index/updatevideo')}",
                 type:"POST",
                 data: {
                     data:JSON.stringify(data.field)

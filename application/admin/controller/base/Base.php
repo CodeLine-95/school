@@ -52,6 +52,11 @@ class Base extends Controller
 	    $upload = new \upload\Upload($_FILES['file']['tmp_name'],$_POST['blob_num'],$_POST['total_blob_num'],$_POST['file_name'],'video/'.date('Ymd',time()));
 		return $upload->apiReturn();
     }
+    
+    public function musicaction(){
+	    $upload = new \upload\Upload($_FILES['file']['tmp_name'],$_POST['blob_num'],$_POST['total_blob_num'],$_POST['file_name'],'audio/'.date('Ymd',time()));
+		return $upload->apiReturn();
+    }
 
     /**
      * 字节转换兆
